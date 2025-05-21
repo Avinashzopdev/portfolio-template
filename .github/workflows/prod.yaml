@@ -1,17 +1,17 @@
-name: Build and Deploy for JS(npm) service
+name: Build and Deploy for Go service
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 env:
-  SERVICE_NAME: portofolio-website
-  NAMESPACE: portofolio-demo-application
-  CLUSTER_NAME: cluster
-  CLUSTER_PROJECT: encoded-site-457113-j4
-  GAR_PROJECT: encoded-site-457113-j4
+  SERVICE_NAME: website
+  NAMESPACE: jsfrontend
+  CLUSTER_NAME: defineclus
+  CLUSTER_PROJECT: expanded-dryad-460406-n3
+  GAR_PROJECT: expanded-dryad-460406-n3
   GAR_REGISTRY: zop-dev
 
 jobs:
@@ -21,22 +21,21 @@ jobs:
 
     outputs:
       image: ${{ steps.output-image.outputs.image }}
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
-      - name: Set up Node
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
         with:
-          node-version: "18.x"
+          go-version: '1.21'
+      - name: Get dependencies
+        run: |
+          go mod download
 
       - name: Login to GAR
         uses: docker/login-action@v2
         with:
           registry: us-central1-docker.pkg.dev
           username: _json_key
-          password: ${{ secrets.PORTOFOLIO_WEBSITE_PORTOFOLIO_DEMO_APPLICATION_DEPLOYMENT_KEY }}
+          password: ${{ secrets.WEBSITE_JSFRONTEND_DEPLOYMENT_KEY }}
 
       - name: Build and Push Docker Image to GAR
         uses: docker/build-push-action@v2
@@ -44,9 +43,11 @@ jobs:
           push: true
           context: .
           file: ./Dockerfile
-          tags: us-central1-docker.pkg.dev/${{ env.GAR_PROJECT }}/${{ env.GAR_REGISTRY }}/${{ env.NAMESPACE }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          tags:
+            us-central1-docker.pkg.dev/${{ env.GAR_PROJECT }}/${{ env.GAR_REGISTRY }}/${{ env.NAMESPACE }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
       - id: output-image
-        run: echo "image=`echo us-central1-docker.pkg.dev/${{ env.GAR_PROJECT }}/${{ env.GAR_REGISTRY }}/${{ env.NAMESPACE }}/${{ env.SERVICE_NAME }}:${{ github.sha }}`" >> "$GITHUB_OUTPUT"
+        run: 
+          echo "image=`echo us-central1-docker.pkg.dev/${{ env.GAR_PROJECT }}/${{ env.GAR_REGISTRY }}/${{ env.NAMESPACE }}/${{ env.SERVICE_NAME }}:${{ github.sha }}`" >> "$GITHUB_OUTPUT"
 
   deployment:
     runs-on: ubuntu-latest
@@ -62,7 +63,7 @@ jobs:
       - name: Authorize to GCP service account
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.PORTOFOLIO_WEBSITE_PORTOFOLIO_DEMO_APPLICATION_DEPLOYMENT_KEY }}
+          credentials_json: ${{ secrets.WEBSITE_JSFRONTEND_DEPLOYMENT_KEY }}
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
@@ -71,7 +72,10 @@ jobs:
         run: gcloud --quiet components update kubectl
 
       - name: Set GCloud Project and Fetch Cluster Credentials
-        run: gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }}  --region=us-central1 --project=${{ env.CLUSTER_PROJECT }}
+        run:
+          gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region=us-central1 --project=${{ env.CLUSTER_PROJECT }}
 
       - name: Update Deployment Image
-        run: kubectl set image deployment/${{ env.SERVICE_NAME }} ${{ env.SERVICE_NAME }}=${{ env.image }} --namespace ${{ env.NAMESPACE }}
+        run: 
+          kubectl set image deployment/${{ env.SERVICE_NAME }} ${{ env.SERVICE_NAME }}=${{ env.image }} --namespace ${{ env.NAMESPACE }}
+  
