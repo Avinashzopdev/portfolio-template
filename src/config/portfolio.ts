@@ -45,7 +45,7 @@ export const portfolioData: PortfolioConfig = {
   name: "Himani",
   title: "Full Stack Developer",
   about: "Passionate developer with expertise in building modern web applications. I love turning complex problems into simple, beautiful, and intuitive solutions.",
-  avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&q=80",
+  avatar: "https://storage.googleapis.com/zopdev-test-bucket/zop/files/originals/20250521/49c08a46-1d42-4908-95b2-78f7efa4a21c-IMG18741.jpg",
   contact: {
     email: "john.doe@example.com",
     location: "San Francisco, CA",
