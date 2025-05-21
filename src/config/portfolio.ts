@@ -43,8 +43,8 @@ export interface PortfolioConfig {
 
 export const portfolioData: PortfolioConfig = {
   name: "Himani",
-  title: "Full Stack Developer",
-  about: "Passionate developer with expertise in building modern web applications. I love turning complex problems into simple, beautiful, and intuitive solutions.",
+  title: "Presales & Revenue",
+  about: "I'm Himani, leading Presales and Revenue at ZopDev. I work closely with prospects to understand their needs, showcase how ZopDev fits, and drive successful conversions. From first demo to final deal, I bridge tech and value — ensuring our platform delivers impact and growth for every customer we engage.",
   avatar: "https://storage.googleapis.com/zopdev-test-bucket/zop/files/originals/20250521/49c08a46-1d42-4908-95b2-78f7efa4a21c-IMG18741.jpg",
   contact: {
     email: "john.doe@example.com",
