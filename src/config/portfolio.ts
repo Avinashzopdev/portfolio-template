@@ -42,7 +42,7 @@ export interface PortfolioConfig {
 }
 
 export const portfolioData: PortfolioConfig = {
-  name: "Avinash",
+  name: "Himani",
   title: "Full Stack Developer",
   about: "Passionate developer with expertise in building modern web applications. I love turning complex problems into simple, beautiful, and intuitive solutions.",
   avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&q=80",
