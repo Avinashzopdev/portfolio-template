@@ -7,9 +7,9 @@ on:
     branches: [ main ]
 
 env:
-  SERVICE_NAME: website
-  NAMESPACE: jsfrontend
-  CLUSTER_NAME: defineclus
+  SERVICE_NAME: professional-website
+  NAMESPACE: website
+  CLUSTER_NAME: anime15
   CLUSTER_PROJECT: expanded-dryad-460406-n3
   GAR_PROJECT: expanded-dryad-460406-n3
   GAR_REGISTRY: zop-dev
@@ -31,12 +31,14 @@ jobs:
         with:
           node-version: "18.x"	
 
+
+
       - name: Login to GAR
         uses: docker/login-action@v2
         with:
           registry: us-central1-docker.pkg.dev
           username: _json_key
-          password: ${{ secrets.WEBSITE_JSFRONTEND_DEPLOYMENT_KEY }}
+          password: ${{ secrets.PROFESSIONAL_WEBSITE_WEBSITE_DEPLOYMENT_KEY }}
 
       - name: Build and Push Docker Image to GAR
         uses: docker/build-push-action@v2
@@ -64,7 +66,7 @@ jobs:
       - name: Authorize to GCP service account
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.WEBSITE_JSFRONTEND_DEPLOYMENT_KEY }}
+          credentials_json: ${{ secrets.PROFESSIONAL_WEBSITE_WEBSITE_DEPLOYMENT_KEY }}
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
