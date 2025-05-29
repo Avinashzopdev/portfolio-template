@@ -7,9 +7,9 @@ on:
     branches: [ main ]
 
 env:
-  SERVICE_NAME: professional-website
-  NAMESPACE: website
-  CLUSTER_NAME: anime15
+  SERVICE_NAME: website
+  NAMESPACE: test-dev
+  CLUSTER_NAME: zopdev-test
   CLUSTER_PROJECT: expanded-dryad-460406-n3
   GAR_PROJECT: expanded-dryad-460406-n3
   GAR_REGISTRY: zop-dev
@@ -31,14 +31,12 @@ jobs:
         with:
           node-version: "18.x"	
 
-
-
       - name: Login to GAR
         uses: docker/login-action@v2
         with:
-          registry: us-central1-docker.pkg.dev
+          registry: asia-south1-docker.pkg.dev
           username: _json_key
-          password: ${{ secrets.PROFESSIONAL_WEBSITE_WEBSITE_DEPLOYMENT_KEY }}
+          password: ${{ secrets.WEBSITE_TEST_DEV_DEPLOYMENT_KEY }}
 
       - name: Build and Push Docker Image to GAR
         uses: docker/build-push-action@v2
@@ -47,10 +45,10 @@ jobs:
           context: .
           file: ./Dockerfile
           tags:
-            us-central1-docker.pkg.dev/${{ env.GAR_PROJECT }}/${{ env.GAR_REGISTRY }}/${{ env.NAMESPACE }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+            asia-south1-docker.pkg.dev/${{ env.GAR_PROJECT }}/${{ env.GAR_REGISTRY }}/${{ env.NAMESPACE }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
       - id: output-image
         run:
-          echo "image=`echo us-central1-docker.pkg.dev/${{ env.GAR_PROJECT }}/${{ env.GAR_REGISTRY }}/${{ env.NAMESPACE }}/${{ env.SERVICE_NAME }}:${{ github.sha }}`" >> "$GITHUB_OUTPUT"
+          echo "image=`echo asia-south1-docker.pkg.dev/${{ env.GAR_PROJECT }}/${{ env.GAR_REGISTRY }}/${{ env.NAMESPACE }}/${{ env.SERVICE_NAME }}:${{ github.sha }}`" >> "$GITHUB_OUTPUT"
 
   deployment:
     runs-on: ubuntu-latest
@@ -66,7 +64,7 @@ jobs:
       - name: Authorize to GCP service account
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.PROFESSIONAL_WEBSITE_WEBSITE_DEPLOYMENT_KEY }}
+          credentials_json: ${{ secrets.WEBSITE_TEST_DEV_DEPLOYMENT_KEY }}
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
@@ -76,7 +74,7 @@ jobs:
 
       - name: Set GCloud Project and Fetch Cluster Credentials
         run:
-          gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }}  --region=us-central1 --project=${{ env.CLUSTER_PROJECT }}
+          gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }}  --region=asia-south1 --project=${{ env.CLUSTER_PROJECT }}
 
       - name: Update Deployment Image
         run:
